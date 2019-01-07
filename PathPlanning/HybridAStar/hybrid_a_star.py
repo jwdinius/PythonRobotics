@@ -7,7 +7,6 @@ author: Atsushi Sakai (@Atsushi_twi)
 """
 
 import sys
-sys.path.append("../ReedsSheppPath/")
 
 import math
 import numpy as np
@@ -21,6 +20,8 @@ H_COST = 1.0
 
 show_animation = True
 
+def evalDeg(f, ang):
+    return f(np.radians(ang))
 
 class Node:
 
@@ -199,19 +200,23 @@ def main():
 
     # Set Initial parameters
     start = [10.0, 10.0, np.deg2rad(90.0)]
-    goal = [50.0, 50.0, np.deg2rad(-90.0)]
+    goal = [50.0, 50.0, np.deg2rad(90.0)]
 
+    # NOTE: xyreso needs to be at least sqrt(2), accounting for worst case of expanding along the diagonal of a node
     xyreso = 2.0
     yawreso = np.deg2rad(15.0)
 
     rx, ry, ryaw = hybrid_a_star_planning(
         start, goal, ox, oy, xyreso, yawreso)
 
-    plt.plot(ox, oy, ".k")
-    # rs.plot_arrow(start[0], start[1], start[2])
-    # rs.plot_arrow(goal[0], goal[1], goal[2])
+    fig, ax = plt.subplots()
+    ax.plot(ox, oy, ".k")
+    ax.arrow(start[0], start[1], xyreso*np.cos(start[2]), xyreso*np.sin(start[2]), color='b', width=.004, head_width=.4, head_length=.4)
+    ax.plot(start[0], start[1], 'b.')
+    ax.arrow(goal[0]-xyreso*np.cos(goal[2]), goal[1]-xyreso*np.sin(goal[2]), xyreso*np.cos(goal[2]), xyreso*np.sin(goal[2]), color='m', width=.004, head_width=.4, head_length=.4, length_includes_head=True)
+    ax.plot(goal[0], goal[1], 'm.')
 
-    plt.grid(True)
+    #plt.grid(True)
     plt.axis("equal")
     plt.show()
 
